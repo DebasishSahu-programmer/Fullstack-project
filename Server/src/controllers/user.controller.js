@@ -313,8 +313,9 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
         },
         {
             new: true
-        }.select("-password -refreshToken")
-    )
+        }
+    ).select("-password -refreshToken")
+
 
     return res
         .status(200)
@@ -351,7 +352,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
     const { username } = req.params
 
     if (!username?.trim()) {
-        throw new Error(400, "username is missing");
+        throw new ApiError(400, "username is missing");
     }
 
     const channel = await User.aggregate([
@@ -471,6 +472,8 @@ const getWatchHistory = asyncHandler(async (req, res) => {
         )
 
 })
+
+
 
 export {
     registerUser,
