@@ -13,6 +13,11 @@ const toggleSubscription = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Invalid channelId")
     }
 
+    // Prevent self-subscription
+    if (channelId === req.user?._id.toString()) {
+        throw new ApiError(400, "You cannot subscribe to your own channel")
+    }
+
     const isSubscribed = await Subscription.findOne({
         subscriber: req.user?._id,
         channel: channelId
@@ -40,6 +45,12 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
 
     if (!isValidObjectId(channelId)) {
         throw new ApiError(400, "Invalid channelId")
+    }
+
+    // Verify channel exists
+    const channel = await User.findById(channelId)
+    if (!channel) {
+        throw new ApiError(404, "Channel not found")
     }
 
     const subscribers = await Subscription.aggregate([
@@ -90,6 +101,12 @@ const getSubscribedChannels = asyncHandler(async (req, res) => {
 
     if (!isValidObjectId(subscriberId)) {
         throw new ApiError(400, "Invalid subscriberId")
+    }
+
+    // Verify subscriber exists
+    const subscriber = await User.findById(subscriberId)
+    if (!subscriber) {
+        throw new ApiError(404, "Subscriber not found")
     }
 
     const subscribedChannels = await Subscription.aggregate([
