@@ -32,7 +32,7 @@ export default function Navbar({ toggleTheme, isDark }) {
                             <path d="M8 5v14l11-7z" />
                         </svg>
                     </div>
-                    <span className="font-display font-bold text-lg bg-gradient-to-r from-primary-500 to-accent-500 bg-clip-text text-transparent">
+                    <span className="font-display font-bold text-lg bg-linear-to-r from-primary-500 to-accent-500 bg-clip-text text-transparent">
                         VideoTube
                     </span>
                 </Link>
