@@ -4,6 +4,10 @@ A full stack video sharing platform built with the MERN stack.
 
 ---
 
+## 🚀 Live Demo
+
+🔗 **[https://fullstack-project-frontend-damd.onrender.com](https://fullstack-project-frontend-damd.onrender.com)**
+
 ## 🛠️ Tech Stack
 
 ### Frontend
