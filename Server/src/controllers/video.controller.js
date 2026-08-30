@@ -87,7 +87,6 @@ const getAllVideos = asyncHandler(async (req, res) => {
 const publishAVideo = asyncHandler(async (req, res) => {
     const { title, description } = req.body
    
-
     if ([title, description].some((field) => field?.trim() === "")) {
         throw new ApiError(400, "title and description are required")
     }
@@ -118,8 +117,8 @@ const publishAVideo = asyncHandler(async (req, res) => {
         title,
         description,
         duration: videoFile.duration,
-        videoFile: videoFile.url,
-        thumbnail: thumbnail.url,
+        videoFile: videoFile.secure_url,
+        thumbnail: thumbnail.secure_url,
         owner: req.user?._id,
         isPublished: true
     })
@@ -280,7 +279,6 @@ const getVideoById = asyncHandler(async (req, res) => {
 const updateVideo = asyncHandler(async (req, res) => {
     const { videoId } = req.params
     
-
     const { title, description } = req.body
 
     if (!isValidObjectId(videoId)) {
@@ -310,11 +308,11 @@ const updateVideo = asyncHandler(async (req, res) => {
     if (thumbnailLocalPath) {
         const thumbnail = await uploadOnCloudinary(thumbnailLocalPath)
 
-        if (!thumbnail.url) {
+        if (!thumbnail.secure_url) {
             throw new ApiError(400, "Error while uploading thumbnail")
         }
 
-        updateFields.thumbnail = thumbnail.url
+        updateFields.thumbnail = thumbnail.secure_url
     }
 
     await Video.findByIdAndUpdate(
@@ -359,7 +357,6 @@ const updateVideo = asyncHandler(async (req, res) => {
 const deleteVideo = asyncHandler(async (req, res) => {
     const { videoId } = req.params
     
-
     if (!isValidObjectId(videoId)) {
         throw new ApiError(400, "Invalid videoId")
     }
