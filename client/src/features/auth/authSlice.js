@@ -117,6 +117,7 @@ const authSlice = createSlice({
                 state.loading = false
                 state.user = action.payload.data.user
                 state.isAuthenticated = true
+                localStorage.setItem("isLoggedIn", "true") 
             })
             .addCase(loginUser.rejected, (state, action) => { state.loading = false; state.error = action.payload })
 
@@ -124,6 +125,7 @@ const authSlice = createSlice({
         builder.addCase(logoutUser.fulfilled, (state) => {
             state.user = null
             state.isAuthenticated = false
+             localStorage.removeItem("isLoggedIn")
         })
 
         // getCurrentUser

@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { useSearchParams } from "react-router"
+import { useSearchParams, Link } from "react-router"
 import { getAllVideos } from "../features/video/videoSlice"
 import VideoCard from "../components/VideoCard"
 
 export default function Home() {
     const dispatch = useDispatch()
-    const { videos, loading, error, totalPages, currentPage } = useSelector(state => state.video)
+    const { videos, loading, error, unauthorized, totalPages, currentPage } = useSelector(state => state.video)
     const [searchParams] = useSearchParams()
     const query = searchParams.get("query") || ""
     const [page, setPage] = useState(1)
@@ -70,8 +70,28 @@ export default function Home() {
                 </div>
             )}
 
+            {/* Not logged in */}
+            {unauthorized && !loading && (
+                <div className="text-center py-20">
+                    <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gray-100 dark:bg-dark-700 flex items-center justify-center">
+                        <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                    </div>
+                    <p className="text-gray-500 dark:text-gray-400 mb-4">
+                        Please log in to see videos.
+                    </p>
+                    <Link
+                        to="/login"
+                        className="px-4 py-2 text-sm text-white bg-gradient-main rounded-xl hover:opacity-90 transition-all inline-block"
+                    >
+                        Log in
+                    </Link>
+                </div>
+            )}
+
             {/* Error */}
-            {error && !loading && (
+            {error && !loading && !unauthorized && (
                 <div className="text-center py-20">
                     <p className="text-red-500 mb-4">{error}</p>
                     <button onClick={() => dispatch(getAllVideos({ query }))}
@@ -82,7 +102,7 @@ export default function Home() {
             )}
 
             {/* Videos grid */}
-            {!loading && !error && (
+            {!loading && !error && !unauthorized && (
                 <>
                     {videos.length === 0 ? (
                         <div className="text-center py-20">

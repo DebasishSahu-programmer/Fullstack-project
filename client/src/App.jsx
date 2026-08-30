@@ -59,9 +59,12 @@ function AppRoot() {
         }
     }, [isDark])
 
-    useEffect(() => {
+   useEffect(() => {
+    const hasSession = localStorage.getItem("isLoggedIn") === "true"
+    if (hasSession) {
         dispatch(getCurrentUser())
-    }, [])
+    }
+}, [])
 
     const toggleTheme = () => setIsDark(prev => !prev)
 

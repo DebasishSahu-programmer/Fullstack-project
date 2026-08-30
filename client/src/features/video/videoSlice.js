@@ -10,7 +10,10 @@ export const getAllVideos = createAsyncThunk(
             })
             return res.data
         } catch (error) {
-            return rejectWithValue(error.response?.data?.message || "Failed to fetch videos")
+            return rejectWithValue({
+                message: error.response?.data?.message || "Failed to fetch videos",
+                statusCode: error.response?.status
+            })
         }
     }
 )
@@ -81,28 +84,41 @@ export const togglePublishStatus = createAsyncThunk(
 
 const videoSlice = createSlice({
     name: "video",
-    initialState: {
-        videos: [],
-        currentVideo: null,
-        loading: false,
-        error: null,
-        totalPages: 0,
-        currentPage: 1,
-    },
+   initialState: {
+    videos: [],
+    currentVideo: null,
+    loading: false,
+    error: null,
+    unauthorized: false,
+    totalPages: 0,
+    currentPage: 1,
+},
     reducers: {
         clearCurrentVideo: (state) => { state.currentVideo = null },
         clearError: (state) => { state.error = null }
     },
     extraReducers: (builder) => {
         builder
-            .addCase(getAllVideos.pending, (state) => { state.loading = true; state.error = null })
-            .addCase(getAllVideos.fulfilled, (state, action) => {
-                state.loading = false
-                state.videos = action.payload.data.docs
-                state.totalPages = action.payload.data.totalPages
-                state.currentPage = action.payload.data.page
-            })
-            .addCase(getAllVideos.rejected, (state, action) => { state.loading = false; state.error = action.payload })
+    .addCase(getAllVideos.pending, (state) => {
+        state.loading = true
+        state.error = null
+        state.unauthorized = false
+    })
+    .addCase(getAllVideos.fulfilled, (state, action) => {
+        state.loading = false
+        state.videos = action.payload.data.docs
+        state.totalPages = action.payload.data.totalPages
+        state.currentPage = action.payload.data.page
+    })
+    .addCase(getAllVideos.rejected, (state, action) => {
+        state.loading = false
+        if (action.payload?.statusCode === 401) {
+            state.unauthorized = true
+        } else {
+            state.error = action.payload?.message
+        }
+    })
+          
 
         builder
             .addCase(getVideoById.pending, (state) => { state.loading = true; state.error = null })
