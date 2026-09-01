@@ -41,14 +41,14 @@ const toggleSubscription = asyncHandler(async (req, res) => {
 })
 
 const getUserChannelSubscribers = asyncHandler(async (req, res) => {
-    const { channelId } = req.params
+    const { subscriberId } = req.params
 
-    if (!isValidObjectId(channelId)) {
-        throw new ApiError(400, "Invalid channelId")
+    if (!isValidObjectId(subscriberId)) {
+        throw new ApiError(400, "Invalid subscriberId")
     }
 
     // Verify channel exists
-    const channel = await User.findById(channelId)
+    const channel = await User.findById(subscriberId)
     if (!channel) {
         throw new ApiError(404, "Channel not found")
     }
@@ -56,7 +56,7 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
     const subscribers = await Subscription.aggregate([
         {
             $match: {
-                channel: new mongoose.Types.ObjectId(channelId)
+                channel: new mongoose.Types.ObjectId(subscriberId)
             }
         },
         {
@@ -97,14 +97,14 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
 })
 
 const getSubscribedChannels = asyncHandler(async (req, res) => {
-    const { subscriberId } = req.params
+    const { channelId } = req.params
 
-    if (!isValidObjectId(subscriberId)) {
-        throw new ApiError(400, "Invalid subscriberId")
+    if (!isValidObjectId(channelId)) {
+        throw new ApiError(400, "Invalid channelId")
     }
 
     // Verify subscriber exists
-    const subscriber = await User.findById(subscriberId)
+    const subscriber = await User.findById(channelId)
     if (!subscriber) {
         throw new ApiError(404, "Subscriber not found")
     }
@@ -112,7 +112,7 @@ const getSubscribedChannels = asyncHandler(async (req, res) => {
     const subscribedChannels = await Subscription.aggregate([
         {
             $match: {
-                subscriber: new mongoose.Types.ObjectId(subscriberId)
+                subscriber: new mongoose.Types.ObjectId(channelId)
             }
         },
         {
